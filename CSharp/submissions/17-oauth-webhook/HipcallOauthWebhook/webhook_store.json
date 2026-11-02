@@ -1,0 +1,25 @@
+{
+  "WebhookId": "00000000-0000-0000-0000-000000000000",
+  "WebhookSecret": "whsec_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX=",
+  "PreviousWebhookSecret": null,
+  "WebhookName": "Acme SaaS - Hangup Sync",
+  "WebhookUrl": "https://your-tunnel.ngrok-free.dev/evet=12345",
+  "WebhookState": "active",
+  "EventTypes": [
+    "call.ended"
+  ],
+  "AccessToken": "YOUR_ACCESS_TOKEN",
+  "RefreshToken": "YOUR_REFRESH_TOKEN",
+  "AuthFlowSource": "OAuth2",
+  "ConfiguredAt": "2026-10-30T16:28:57.7141211+03:00",
+  "RecentEvents": [
+    {
+      "ReceivedAt": "2026-10-30T16:29:05.2800478+03:00",
+      "WebhookIdHeader": "evt_xxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "EventType": "webhook.test",
+      "Verified": true,
+      "Summary": "Test webhook olay\u0131 ba\u015Far\u0131yla al\u0131nd\u0131 (Mesaj: Hipcall webhook test)",
+      "RawPayload": "{\u0022data\u0022:{\u0022endpoint_id\u0022:\u002200000000-0000-0000-0000-000000000000\u0022,\u0022message\u0022:\u0022Hipcall webhook test\u0022},\u0022id\u0022:\u0022evt_xxxxxxxxxxxxxxxxxxxxxxxxxx\u0022,\u0022timestamp\u0022:\u00222026-10-30T13:29:04Z\u0022,\u0022type\u0022:\u0022webhook.test\u0022}"
+    }
+  ]
+}
