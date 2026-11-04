@@ -1,0 +1,26 @@
+{
+  "AccessToken": "YOUR_ACCESS_TOKEN",
+  "RefreshToken": "YOUR_REFRESH_TOKEN",
+  "GrantedScope": "profile email communication_settings:write offline_access",
+  "SpeedDialId": "00000000-0000-0000-0000-000000000000",
+  "SpeedDialName": "Order status",
+  "ExtensionNumber": "7001",
+  "SpeedDialState": "active",
+  "WebServiceUrl": "https://your-tunnel.ngrok-free.dev/hizli-arama",
+  "OrderMappings": {
+    "1234": "905301234567",
+    "1001": "905321112233",
+    "2026": "905554443322"
+  },
+  "RecentLookups": [
+    {
+      "ReceivedAt": "2026-11-03T12:39:08.7587921+03:00",
+      "OrderNumber": "1234",
+      "CallUuid": "00000000-0000-0000-0000-000000000000",
+      "AuthValid": true,
+      "ReturnedDestination": "905301234567",
+      "Summary": "Sipari\u015F #1234 -\u003E 905301234567 (HTTP 200)",
+      "RawPayload": "{\u0022timestamp\u0022:1793698749,\u0022number\u0022:\u00221234\u0022,\u0022uuid\u0022:\u002200000000-0000-0000-0000-000000000000\u0022,\u0022user_id\u0022:null,\u0022speed_dial_id\u0022:20}"
+    }
+  ]
+}
