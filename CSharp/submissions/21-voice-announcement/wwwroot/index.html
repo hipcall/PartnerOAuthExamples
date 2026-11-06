@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hipcall Sesli Mesaj — Tek Tıkla Anons Gönderme (Voice Announcement)</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --success: #16a34a;
+            --success-light: #f0fdf4;
+            --danger: #dc2626;
+            --danger-light: #fef2f2;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --card-bg: #ffffff;
+            --bg: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border);
+            padding: 32px;
+        }
+
+        .header {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            margin-bottom: 8px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .label-hint {
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-main);
+            background: #ffffff;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.5;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .quick-templates {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .template-btn {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .template-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.15s, transform 0.05s;
+            margin-top: 24px;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.99);
+        }
+
+        .btn-submit:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Result Panel */
+        .result-panel {
+            display: none;
+            margin-top: 24px;
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-success {
+            background: var(--success-light);
+            border-color: #bbf7d0;
+            color: #14532d;
+        }
+
+        .result-error {
+            background: var(--danger-light);
+            border-color: #fecaca;
+            color: #7f1d1d;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        .result-call-id {
+            background: #ffffff;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: monospace;
+            font-size: 13px;
+            margin-top: 8px;
+            color: var(--text-main);
+            word-break: break-all;
+        }
+
+        pre {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+            overflow-x: auto;
+            margin-top: 10px;
+            color: #334155;
+            max-height: 220px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <span class="badge">Hipcall Voice Announcement</span>
+            <h1 class="title">Tek Tıkla Sesli Mesaj Gönder</h1>
+            <p class="subtitle">
+                Hedef numarayı arayarak girilen metni Text-to-Speech (TTS) ile sesli mesaj / anons olarak okutur.
+            </p>
+        </div>
+
+        <form id="voiceMessageForm">
+            <div class="form-group">
+                <label for="calleeNumber">
+                    Hedef Telefon Numarası
+                    <span class="label-hint">(E.164 veya yerel format, örn: +90551XXXXXXX)</span>
+                </label>
+                <input type="text" id="calleeNumber" name="calleeNumber" placeholder="+90551XXXXXXX" required>
+            </div>
+
+            <div class="form-group">
+                <label for="messageText">
+                    Sesli Mesaj Metni
+                    <span class="label-hint">(Hedef telefona okunacak konuşma metni)</span>
+                </label>
+                <textarea id="messageText" name="messageText" placeholder="Merhaba! Siparişiniz onaylandı ve kargoya verildi. İyi günler dileriz." required></textarea>
+                
+                <div class="quick-templates">
+                    <span style="font-size: 12px; color: var(--text-muted); align-self: center;">Örnekler:</span>
+                    <button type="button" class="template-btn" onclick="setTemplate('Merhaba! Siparişiniz kargoya verilmiştir, takip kodunuz SMS ile iletilecektir.')">📦 Sipariş Kargo</button>
+                    <button type="button" class="template-btn" onclick="setTemplate('Sayın müşterimiz, yarın saat 14:00\'te randevunuz bulunmaktadır. Onaylamak için lütfen bekleyin.')">📅 Randevu Hatırlatma</button>
+                    <button type="button" class="template-btn" onclick="setTemplate('Güvenlik doğrulama kodunuz 4 8 2 1. Lütfen bu kodu kimseyle paylaşmayınız.')">🔐 Doğrulama Kodu</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="language">
+                        Seslendirme Dili
+                        <span class="label-hint">(TTS Dil Kodu)</span>
+                    </label>
+                    <select id="language" name="language">
+                        <option value="tr-TR" selected>Türkçe (tr-TR)</option>
+                        <option value="en-US">İngilizce (en-US)</option>
+                        <option value="de-DE">Almanca (de-DE)</option>
+                        <option value="fr-FR">Fransızca (fr-FR)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="repeat">
+                        Tekrar Sayısı
+                        <span class="label-hint">(1 ile 5 arası)</span>
+                    </label>
+                    <input type="number" id="repeat" name="repeat" value="1" min="1" max="5" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="numberId">
+                    Çıkış Numarası ID'si (number_id)
+                    <span class="label-hint">(Hesabınızdaki aktif Hipcall numara ID'si)</span>
+                </label>
+                <input type="number" id="numberId" name="numberId" value="942" placeholder="942">
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-submit">
+                <div class="spinner" id="spinner"></div>
+                <span id="btnText">🚀 Sesli Mesajı Gönder (Announcement)</span>
+            </button>
+        </form>
+
+        <div id="resultPanel" class="result-panel">
+            <div id="resultHeader" class="result-header"></div>
+            <div id="resultMessage"></div>
+            <div id="resultCallIdBox" style="display: none;">
+                <strong>Oluşturulan Çağrı Kimliği (Call ID):</strong>
+                <div id="resultCallId" class="result-call-id"></div>
+            </div>
+            <pre id="resultRaw"></pre>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setTemplate(text) {
+        document.getElementById('messageText').value = text;
+    }
+
+    const form = document.getElementById('voiceMessageForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btnText');
+    const resultPanel = document.getElementById('resultPanel');
+    const resultHeader = document.getElementById('resultHeader');
+    const resultMessage = document.getElementById('resultMessage');
+    const resultCallIdBox = document.getElementById('resultCallIdBox');
+    const resultCallId = document.getElementById('resultCallId');
+    const resultRaw = document.getElementById('resultRaw');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // UI Reset
+        submitBtn.disabled = true;
+        spinner.style.display = 'inline-block';
+        btnText.textContent = 'İstek Gönderiliyor...';
+        resultPanel.style.display = 'none';
+        resultCallIdBox.style.display = 'none';
+
+        const payload = {
+            calleeNumber: document.getElementById('calleeNumber').value.trim(),
+            text: document.getElementById('messageText').value.trim(),
+            language: document.getElementById('language').value,
+            repeat: parseInt(document.getElementById('repeat').value, 10) || 1,
+            numberId: parseInt(document.getElementById('numberId').value, 10) || 942
+        };
+
+        try {
+            const response = await fetch('/api/send-voice-message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            resultPanel.style.display = 'block';
+
+            if (response.ok && data.success) {
+                resultPanel.className = 'result-panel result-success';
+                resultHeader.innerHTML = `✅ Sesli Mesaj Başarıyla Başlatıldı! (HTTP ${data.statusCode})`;
+                resultMessage.textContent = `${payload.calleeNumber} numarası aranıyor ve mesaj seslendirilecek.`;
+
+                if (data.callId) {
+                    resultCallIdBox.style.display = 'block';
+                    resultCallId.textContent = data.callId;
+                }
+
+                resultRaw.textContent = JSON.stringify(data, null, 2);
+            } else {
+                resultPanel.className = 'result-panel result-error';
+                resultHeader.innerHTML = `❌ İstek Başarısız Oldu (HTTP ${data.statusCode || response.status})`;
+                resultMessage.textContent = data.message || 'Hipcall API bir hata döndürdü.';
+                resultRaw.textContent = JSON.stringify(data, null, 2);
+            }
+        } catch (error) {
+            resultPanel.style.display = 'block';
+            resultPanel.className = 'result-panel result-error';
+            resultHeader.innerHTML = '⚠️ Bağlantı Hatası';
+            resultMessage.textContent = error.message || 'Sunucuya bağlanırken bir hata oluştu.';
+            resultRaw.textContent = error.stack || error.toString();
+        } finally {
+            submitBtn.disabled = false;
+            spinner.style.display = 'none';
+            btnText.textContent = '🚀 Sesli Mesajı Gönder (Announcement)';
+        }
+    });
+</script>
+
+</body>
+</html>
+
